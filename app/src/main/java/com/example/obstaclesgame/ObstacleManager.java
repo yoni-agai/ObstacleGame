@@ -6,9 +6,12 @@ import java.util.Random;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
-public class ObstacleManager implements GameObject {
+import com.example.obstaclesgame.interfaces.IGameObject;
 
-    private Drawable drawable;
+public class ObstacleManager implements IGameObject {
+
+    private Drawable wall;
+    private Drawable coin;
 
     private ArrayList<Obstacle> obstacles;
     private int[] xStartOptions;
@@ -19,10 +22,16 @@ public class ObstacleManager implements GameObject {
     private int obstacleGap;
 
     private long startTime;
-    private boolean isCollisionDetected;
 
-    public ObstacleManager (int obstacleGap, int num_of_roads, int obstacle_height, Drawable drawable) {
-        this.drawable = drawable;
+    private boolean isWall;
+    private boolean isCollisionDetected;
+    private boolean isWallCollision;
+
+
+
+    public ObstacleManager (int obstacleGap, int num_of_roads, int obstacle_height, Drawable wall, Drawable coin) {
+        this.wall = wall;
+        this.coin = coin;
 
         this.obstacleGap = obstacleGap;
         this.num_of_roads = num_of_roads;
@@ -33,7 +42,10 @@ public class ObstacleManager implements GameObject {
         this.obstacles = new ArrayList<>();
 
         this.startTime = System.currentTimeMillis();
+
+        this.isWall = true;
         this.isCollisionDetected = false;
+        this.isWallCollision = false;
 
         populateObstacles();
     }
@@ -52,7 +64,16 @@ public class ObstacleManager implements GameObject {
 
         while(currY < 0) {
             int randX = xStartOptions[new Random().nextInt(xStartOptions.length)];
-            obstacles.add(new Obstacle(randX, currY, road_width, obstacle_height, drawable));
+
+            if (isWall) {
+                obstacles.add(new Obstacle(randX, currY, road_width, obstacle_height, isWall, wall));
+                isWall = false;
+
+            }
+            else {
+                obstacles.add(new Obstacle(randX, currY, road_width, obstacle_height, isWall, coin));
+                isWall = true;
+            }
             currY += obstacle_height + obstacleGap;
         }
     }
@@ -60,6 +81,7 @@ public class ObstacleManager implements GameObject {
     public boolean playerCollide(Player player) {
         for (Obstacle ob : obstacles) {
             if (ob.playerCollide(player)) {
+                isWallCollision = ob.isWall();
                 isCollisionDetected = true;
                 obstacles.remove(ob);
                 return true;
@@ -90,16 +112,34 @@ public class ObstacleManager implements GameObject {
                 isExitScreen = true;
             }
         }
+
         if(isExitScreen) {
             int randX = xStartOptions[new Random().nextInt(xStartOptions.length)];
-            obstacles.add(0, new Obstacle(randX, -obstacle_height, road_width, obstacle_height, drawable));
+
+            boolean isObstacleIsWall = obstacles.get(obstacles.size() -1 ).isWall();
+            if (isObstacleIsWall) {
+                obstacles.add(0, new Obstacle(randX, -obstacle_height, road_width, obstacle_height, isObstacleIsWall, wall));
+            }
+            else {
+                obstacles.add(0, new Obstacle(randX, -obstacle_height, road_width, obstacle_height, isObstacleIsWall, coin));
+            }
             obstacles.remove(obstacles.size() - 1);
         }
 
         if (isCollisionDetected) {
             int randX = xStartOptions[new Random().nextInt(xStartOptions.length)];
-            obstacles.add(0, new Obstacle(randX, -Constants.SCREEN_HEIGHT/2, road_width, obstacle_height, drawable));
+            if (isWallCollision) {
+                obstacles.add(0, new Obstacle(randX, -Constants.SCREEN_HEIGHT/2, road_width, obstacle_height, isWallCollision, wall));
+            }
+            else {
+                obstacles.add(0, new Obstacle(randX, -Constants.SCREEN_HEIGHT/2, road_width, obstacle_height, isWallCollision, coin));
+            }
+
             isCollisionDetected = false;
         }
+    }
+
+    public boolean isWallCollision() {
+        return isWallCollision;
     }
 }

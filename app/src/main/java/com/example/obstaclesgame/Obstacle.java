@@ -4,10 +4,13 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
-public class Obstacle implements GameObject {
+import com.example.obstaclesgame.interfaces.IGameObject;
+
+public class Obstacle implements IGameObject {
 
     private Rect rectangle;
     private Drawable drawable;
+    private boolean isWall;
 
     public Rect getRectangle() {
         return rectangle;
@@ -18,8 +21,9 @@ public class Obstacle implements GameObject {
         rectangle.bottom += y;
     }
 
-    public Obstacle(int x, int y, int width, int height, Drawable drawable) {
+    public Obstacle(int x, int y, int width, int height, boolean isWall, Drawable drawable) {
         this.drawable = drawable;
+        this.isWall = isWall;
         rectangle = new Rect(x, y, x + width, y + height);
     }
 
@@ -35,5 +39,9 @@ public class Obstacle implements GameObject {
 
     @Override
     public void update() {
+    }
+
+    public boolean isWall() {
+        return isWall;
     }
 }

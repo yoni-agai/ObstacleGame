@@ -1,0 +1,2 @@
+ObstaclesGame.dir filter=lfs diff=lfs merge=lfs -text
+.dir filter=lfs diff=lfs merge=lfs -text

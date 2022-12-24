@@ -5,7 +5,9 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
-public class Player implements GameObject{
+import com.example.obstaclesgame.interfaces.IGameObject;
+
+public class Player implements IGameObject {
 
     private Rect rectangle;
     private Drawable drawable;
@@ -40,4 +42,5 @@ public class Player implements GameObject{
     public Rect getRectangle() {
         return this.rectangle;
     }
+
 }

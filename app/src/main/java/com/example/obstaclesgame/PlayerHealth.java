@@ -4,7 +4,9 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
-public class PlayerHealth implements GameObject {
+import com.example.obstaclesgame.interfaces.IGameObject;
+
+public class PlayerHealth implements IGameObject {
 
     private Rect rectangle;
     private Drawable drawable;
